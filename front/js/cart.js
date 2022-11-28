@@ -16,7 +16,7 @@ function changeQuantity(id, color, quantity) {
             carte[i][2] = quantity;
         }
         localStorage.setItem("cart", JSON.stringify(carte));
-        window.location.reload();
+        location.reload();
     }
 }
 
@@ -59,7 +59,7 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
                             <div class="cart__item__content__settings">
                                 <div class="cart__item__content__settings__quantity">
                                     <p>Qté : </p>
-                                    <input type="number" class="itemQuantity" name="itemQuantity" onchange="test("${cart[i][0]}", this.value)" min="1" max="100" value="${cart[i][2]}">
+                                    <input type="number" class="itemQuantity" name="itemQuantity" onchange="changeQuantity('${cart[i][0]}', '${cart[i][1]}', this.value)" min="1" max="100" value="${cart[i][2]}">
                                 </div>
                                 <div class="cart__item__content__settings__delete">
                                     <p class="deleteItem">Supprimer</p>
