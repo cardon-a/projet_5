@@ -10,13 +10,24 @@ function getCart() {        // Même fonction que pour le fichier product.js
 }
 
 function changeQuantity(id, color, quantity) {
-    let carte = getCart();
-    for (let i = 0; i < carte.length; i++) {
-        if (id === carte[i][0] && color === carte[i][1]) {
-            carte[i][2] = quantity;
+    let cart = getCart();
+    for (let i = 0; i < cart.length; i++) {
+        if (id === cart[i][0] && color === cart[i][1]) {
+            cart[i][2] = quantity;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            location.reload();
         }
-        localStorage.setItem("cart", JSON.stringify(carte));
-        location.reload();
+    }
+}
+
+function deleteItem(id, color) {
+    let cart = getCart();
+    for (let i = 0; i < cart.length; i++) {
+        if (id === cart[i][0] && color === cart[i][1]) {
+            cart.splice(i, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            location.reload();
+        }
     }
 }
 
@@ -62,7 +73,7 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
                                     <input type="number" class="itemQuantity" name="itemQuantity" onchange="changeQuantity('${cart[i][0]}', '${cart[i][1]}', this.value)" min="1" max="100" value="${cart[i][2]}">
                                 </div>
                                 <div class="cart__item__content__settings__delete">
-                                    <p class="deleteItem">Supprimer</p>
+                                    <p class="deleteItem" onclick="deleteItem('${cart[i][0]}', '${cart[i][1]}')">Supprimer</p>
                                 </div>
                             </div>
                         </div>
