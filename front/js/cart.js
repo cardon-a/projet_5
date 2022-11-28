@@ -31,16 +31,31 @@ function deleteItem(id, color) {
     }
 }
 
-function test(id, qty) {
-    console.log("Value="+qty +" et id="+ id);
+function testMail(mail) {       // Test de l'adresse mail grâce à regexMail
+    let regexMail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i;
+    if (regexMail.test(mail) == false) {
+        return false;
+    } else {
+        document.getElementById("emailErrorMsg").innerHTML = null;
+        return true;
+    }
 }
+
+function testName(name, location) {       // Test des noms et de l'adresse grâce à regexName
+    let regexName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/i;
+    if (regexName.test(name) == false) {
+        return false;
+    } else {
+        document.getElementById(`${location}ErrorMsg`).innerHTML = null;
+        return true;
+    }
+}
+
 
 const recapSection = document.getElementById("cart__items");      
 let cart = getCart();
 let totalPrice = parseInt(0);
 let totalQuantity = parseInt(0);
-console.log(cart.length);
-console.log(cart);
 
 if (cart.length == 0) {     // Affichage du message en cas de panier vide
     document.querySelector("h1").innerHTML = "Votre panier est vide.";
@@ -90,4 +105,47 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
     }
 }
 
-//onchange=\"changeQuantity(\"'+ cart[i][0] +'\", \"'+ cart[i][1] +'\", this.value)\"
+const order = document.getElementById("order");
+order.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    let validateAll = true
+    let cart = getCart();
+    let contact = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        address: document.getElementById("address").value,
+        city: document.getElementById("city").value,
+        email: document.getElementById("email").value
+    }
+    console.log(contact);
+    if (testMail(contact["email"]) == false) {        // Pas de test Regex pour l'adresse car peut avoir trop de formes diverses
+        document.getElementById("emailErrorMsg").innerHTML = "Veuillez entrer une adresse mail valide.";
+        validateAll = false;
+    }
+    if (testName(contact["firstName"], "firstName") == false) {
+        document.getElementById("firstNameErrorMsg").innerHTML = "Veuillez entrer un prénom valide.";
+        validateAll = false;
+    }
+    if (testName(contact["lastName"], "lastName") == false) {
+        document.getElementById("lastNameErrorMsg").innerHTML = "Veuillez entrer un nom valide.";
+        validateAll = false;
+    }
+    if (testName(contact["city"], "city") == false) {
+        document.getElementById("cityErrorMsg").innerHTML = "Veuillez entrer une ville valide.";
+        validateAll = false;
+    }
+    if (contact["address"] == "") {     // Test si l'addresse a bien été renseigné
+        document.getElementById("addressErrorMsg").innerHTML = "Veuillez entrer une addresse valide.";
+        validateAll = false;
+    } else {
+        document.getElementById("addressErrorMsg").innerHTML = null;
+    }
+    if (validateAll == true && cart.length == 0) {      // Ajout d'un message d'erreur en cas de panier vide
+        document.getElementById("cartErrorMsg").innerHTML = "Votre commande n'est pas valide, veuillez vérifier votre panier.";
+        validateAll = false;        
+    } else {
+        document.getElementById("cartErrorMsg").innerHTML = null;
+    }
+    
+})
