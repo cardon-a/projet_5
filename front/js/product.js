@@ -30,13 +30,12 @@ fetch("http://localhost:3000/api/products/"+id)     // Récupérer les données
         }
     })
     .catch(function(err) {      // En cas d'erreur
-        console.log("Une erreur est survenue lors de la récupération des données.");
+        console.log(err);
     });
 
 
 function getCart() {
     if (localStorage.cart != null) {
-        console.log(localStorage.cart);
         let cart = JSON.parse(localStorage.cart);
         return cart;
     } else {
@@ -44,7 +43,7 @@ function getCart() {
         return cart;
     }
 }
-console.log(localStorage.cart);
+
 const addToCartBtn = document.getElementById("addToCart");      // Ajout d'une action lors du click sur le bouton addToCart
 addToCartBtn.addEventListener("click", () => {
     let itemQuantity = document.getElementById("quantity");     // Récupération de la quantité et de la couleur choisie
@@ -69,6 +68,5 @@ addToCartBtn.addEventListener("click", () => {
         }
     }
     localStorage.setItem("cart", JSON.stringify(cart));     // Stockage des données dans le local storage
-    console.log("Panier: "+cart);
 })
 

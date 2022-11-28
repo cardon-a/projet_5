@@ -23,5 +23,3 @@ fetch("http://localhost:3000/api/products")     // Récupérer les données
     .catch(function(err) {      // En cas d'erreur
         console.log(err);
     })
-
-localStorage.clear();
