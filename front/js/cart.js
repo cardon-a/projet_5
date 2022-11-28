@@ -9,7 +9,22 @@ function getCart() {        // Même fonction que pour le fichier product.js
     }
 }
 
-let recapSection = document.getElementById("cart__items");      
+function changeQuantity(id, color, quantity) {
+    let carte = getCart();
+    for (let i = 0; i < carte.length; i++) {
+        if (id === carte[i][0] && color === carte[i][1]) {
+            carte[i][2] = quantity;
+        }
+        localStorage.setItem("cart", JSON.stringify(carte));
+        window.location.reload();
+    }
+}
+
+function test(id, qty) {
+    console.log("Value="+qty +" et id="+ id);
+}
+
+const recapSection = document.getElementById("cart__items");      
 let cart = getCart();
 let totalPrice = parseInt(0);
 let totalQuantity = parseInt(0);
@@ -29,7 +44,29 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
                 }
             })
             .then(function(data) {      // Utiliser les données
-                const productCard = '<article class=\"cart__item\" data-id=\"'+ cart[i][0] +'\" data-color=\"'+ cart[i][1] +'\"><div class=\"cart__item__img\"><img src=\"'+ data.imageUrl +'\" alt=\"'+ data.altTxt +'\"></div><div class=\"cart__item__content\"><div class=\"cart__item__content__description\"><h2>'+ data.name +'</h2><p>'+ cart[i][1] +'</p><p>'+ data.price +' €</p></div><div class=\"cart__item__content__settings\"><div class=\"cart__item__content__settings__quantity\"><p>Qté : </p><input type=\"number\" class=\"itemQuantity\" name=\"itemQuantity\" min=\"1\" max=\"100\" value=\"'+ cart[i][2] +'\"></div><div class=\"cart__item__content__settings__delete\"><p class=\"deleteItem\">Supprimer</p></div></div></div></article>';
+                console.log(cart[i][0] +"id et color "+ cart[i][1]);
+                const productCard = `
+                    <article class="cart__item" data-id="${cart[i][0]}" data-color="${cart[i][1]}">
+                        <div class="cart__item__img">
+                            <img src="${data.imageUrl}" alt="${data.altTxt}">
+                        </div>
+                        <div class="cart__item__content">
+                            <div class="cart__item__content__description">
+                                <h2>${data.name}</h2>
+                                <p>${cart[i][1]}</p>
+                                <p>${data.price} €</p>
+                            </div>
+                            <div class="cart__item__content__settings">
+                                <div class="cart__item__content__settings__quantity">
+                                    <p>Qté : </p>
+                                    <input type="number" class="itemQuantity" name="itemQuantity" onchange="test("${cart[i][0]}", this.value)" min="1" max="100" value="${cart[i][2]}">
+                                </div>
+                                <div class="cart__item__content__settings__delete">
+                                    <p class="deleteItem">Supprimer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>`;
                 recapSection.innerHTML += productCard;
                 totalPrice += parseInt(data.price)*parseInt(cart[i][2]);
                 totalQuantity += parseInt(cart[i][2]);
@@ -41,3 +78,5 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
             });
     }
 }
+
+//onchange=\"changeQuantity(\"'+ cart[i][0] +'\", \"'+ cart[i][1] +'\", this.value)\"
