@@ -1,7 +1,11 @@
 function getCart() {        // Même fonction que pour le fichier product.js
     if (localStorage.cart != null) {
-        console.log(localStorage.cart);
         let cart = JSON.parse(localStorage.cart);
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i][2] > 100) {
+                cart[i][2] = 100;
+            }
+        }
         return cart;
     } else {
         let cart = [];
@@ -13,7 +17,7 @@ function changeQuantity(id, color, quantity) {
     let cart = getCart();
     for (let i = 0; i < cart.length; i++) {
         if (id === cart[i][0] && color === cart[i][1]) {
-            cart[i][2] = quantity;
+            cart[i][2] = parseInt(quantity);
             localStorage.setItem("cart", JSON.stringify(cart));
             location.reload();
         }
@@ -80,7 +84,7 @@ if (cart.length == 0) {     // Affichage du message en cas de panier vide
                             <div class="cart__item__content__description">
                                 <h2>${data.name}</h2>
                                 <p>${cart[i][1]}</p>
-                                <p>${data.price} €</p>
+                                <p>${data.price*cart[i][2]} €</p>
                             </div>
                             <div class="cart__item__content__settings">
                                 <div class="cart__item__content__settings__quantity">
@@ -118,7 +122,7 @@ order.addEventListener('click', (event) => {
         city: document.getElementById("city").value,
         email: document.getElementById("email").value
     }
-    console.log(contact);
+    let products = []
     if (testMail(contact["email"]) == false) {        // Pas de test Regex pour l'adresse car peut avoir trop de formes diverses
         document.getElementById("emailErrorMsg").innerHTML = "Veuillez entrer une adresse mail valide.";
         validateAll = false;
@@ -143,9 +147,27 @@ order.addEventListener('click', (event) => {
     }
     if (validateAll == true && cart.length == 0) {      // Ajout d'un message d'erreur en cas de panier vide
         document.getElementById("cartErrorMsg").innerHTML = "Votre commande n'est pas valide, veuillez vérifier votre panier.";
-        validateAll = false;        
-    } else {
-        document.getElementById("cartErrorMsg").innerHTML = null;
+        validateAll = false; 
     }
-    
+    if (validateAll == true) {
+        for (let i = 0; i < cart.length; i++) {
+            products.push(cart[i][0]);
+        } 
+        let command = JSON.stringify({contact, products});
+        fetch("http://localhost:3000/api/products/order/", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: command
+        })
+            .then(res => res.json())
+            .then(data => {
+                localStorage.clear();
+                window.location.assign(`./confirmation.html?id=${data.orderId}`);
+            })
+            .catch(() => {
+                alert("Une erreur est survenue, merci de réessayer.");
+            });
+    }
 })
